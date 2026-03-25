@@ -13,22 +13,17 @@ import { AnimatePresence } from "framer-motion";
 
 export default function Home() {
   const { location, status: geoStatus, requestLocation, errorMsg } = useGeolocation();
-  
+
   const [vibe, setVibe] = useLocalStorage<ChillVibe>("chill-vibe", "sun");
   const [radius, setRadius] = useLocalStorage<number>("chill-radius", 10);
   const [timeframe, setTimeframe] = useState<"now" | "in60min">("now");
-  
+
   const [selectedSpotId, setSelectedSpotId] = useState<string | null>(null);
-  
+
   // Mobile layout toggle
   const [mobileView, setMobileView] = useState<"list" | "map">("list");
 
-  const { data: spots = [], isLoading: isLoadingSpots, error: spotsError, refetch } = useChillSpots(
-    location,
-    radius,
-    vibe,
-    timeframe
-  );
+  const { data: spots = [], isLoading: isLoadingSpots, error: spotsError, refetch } = useChillSpots(location, radius, vibe, timeframe);
 
   // Clear selection if spots change
   useEffect(() => {
@@ -37,24 +32,26 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
-      
       {/* HEADER */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/40 px-4 py-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/20">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/20">
               <Compass className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="font-display font-extrabold text-xl leading-none text-foreground tracking-tight">Chill Finder</h1>
+              <h1 className="font-display font-extrabold text-xl leading-none text-foreground tracking-tight">Chillmaxxing</h1>
               <p className="text-xs font-bold text-muted-foreground tracking-wide uppercase">Find your perfect spot</p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-4">
             {geoStatus === "loading" && <span className="text-xs font-semibold text-primary animate-pulse hidden sm:inline-block">Locating...</span>}
-            <button 
-              onClick={() => { requestLocation(); refetch(); }}
+            <button
+              onClick={() => {
+                requestLocation();
+                refetch();
+              }}
               disabled={isLoadingSpots || geoStatus === "loading"}
               className="p-2.5 rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:text-primary transition-colors disabled:opacity-50"
               title="Refresh Data"
@@ -67,17 +64,15 @@ export default function Home() {
 
       {/* MAIN CONTENT */}
       <main className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 flex flex-col lg:flex-row gap-6 lg:gap-8">
-        
         {/* LEFT SIDEBAR - CONTROLS */}
-        <div className="w-full lg:w-1/3 xl:w-[380px] flex flex-col gap-8 shrink-0">
-          
+        <div className="w-full lg:w-1/3 xl:w-95 flex flex-col gap-8 shrink-0">
           {/* Location Request Banner if needed */}
           {geoStatus === "idle" && (
             <div className="bg-primary/10 border-2 border-primary/20 rounded-2xl p-5 text-center">
               <Compass className="w-8 h-8 text-primary mx-auto mb-3" />
               <h3 className="font-bold text-foreground mb-1">Where are you chilling?</h3>
               <p className="text-sm text-muted-foreground mb-4">We need your location to find the best spots nearby.</p>
-              <button 
+              <button
                 onClick={requestLocation}
                 className="w-full py-3 px-4 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 transition-all"
               >
@@ -90,7 +85,7 @@ export default function Home() {
             <div className="bg-destructive/10 border-2 border-destructive/20 rounded-2xl p-5 text-center">
               <AlertTriangle className="w-8 h-8 text-destructive mx-auto mb-3" />
               <h3 className="font-bold text-destructive mb-1">Location Access Denied</h3>
-              <p className="text-sm text-destructive/80">Please enable location access in your browser settings to use Chill Finder.</p>
+              <p className="text-sm text-destructive/80">Please enable location access in your browser settings to use Chillmaxxing.</p>
             </div>
           )}
 
@@ -122,7 +117,7 @@ export default function Home() {
                   onClick={() => setTimeframe("now")}
                   className={cn(
                     "flex-1 py-2.5 px-4 rounded-lg font-bold text-sm transition-all",
-                    timeframe === "now" ? "bg-white text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                    timeframe === "now" ? "bg-white text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
                   )}
                 >
                   Right Now
@@ -131,7 +126,7 @@ export default function Home() {
                   onClick={() => setTimeframe("in60min")}
                   className={cn(
                     "flex-1 py-2.5 px-4 rounded-lg font-bold text-sm transition-all",
-                    timeframe === "in60min" ? "bg-white text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                    timeframe === "in60min" ? "bg-white text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
                   )}
                 >
                   In 60 Mins
@@ -142,15 +137,14 @@ export default function Home() {
         </div>
 
         {/* RIGHT SIDE - RESULTS & MAP */}
-        <div className="flex-1 flex flex-col min-h-[500px] gap-6">
-          
+        <div className="flex-1 flex flex-col min-h-125 gap-6">
           {/* Mobile View Toggle */}
           <div className="lg:hidden flex bg-secondary p-1 rounded-xl shrink-0">
             <button
               onClick={() => setMobileView("list")}
               className={cn(
                 "flex-1 py-2.5 flex items-center justify-center gap-2 rounded-lg font-bold text-sm transition-all",
-                mobileView === "list" ? "bg-white text-foreground shadow-sm" : "text-muted-foreground"
+                mobileView === "list" ? "bg-white text-foreground shadow-sm" : "text-muted-foreground",
               )}
             >
               <ListIcon className="w-4 h-4" /> List
@@ -159,7 +153,7 @@ export default function Home() {
               onClick={() => setMobileView("map")}
               className={cn(
                 "flex-1 py-2.5 flex items-center justify-center gap-2 rounded-lg font-bold text-sm transition-all",
-                mobileView === "map" ? "bg-white text-foreground shadow-sm" : "text-muted-foreground"
+                mobileView === "map" ? "bg-white text-foreground shadow-sm" : "text-muted-foreground",
               )}
             >
               <MapIcon className="w-4 h-4" /> Map
@@ -167,17 +161,11 @@ export default function Home() {
           </div>
 
           <div className="flex-1 flex flex-col lg:flex-row gap-6 min-h-0 relative">
-            
             {/* LIST VIEW */}
-            <div className={cn(
-              "w-full lg:w-[45%] xl:w-1/2 lg:flex flex-col h-[600px] lg:h-auto",
-              mobileView === "list" ? "flex" : "hidden"
-            )}>
+            <div className={cn("w-full lg:w-[45%] xl:w-1/2 lg:flex flex-col h-150 lg:h-auto", mobileView === "list" ? "flex" : "hidden")}>
               <div className="flex justify-between items-end mb-4 shrink-0">
                 <h2 className="font-display font-bold text-2xl">Results</h2>
-                <span className="text-sm font-semibold text-muted-foreground bg-secondary px-3 py-1 rounded-full">
-                  {spots.length} spots
-                </span>
+                <span className="text-sm font-semibold text-muted-foreground bg-secondary px-3 py-1 rounded-full">{spots.length} spots</span>
               </div>
 
               <div className="flex-1 overflow-y-auto pr-2 pb-4 space-y-4">
@@ -214,9 +202,9 @@ export default function Home() {
                 ) : (
                   <AnimatePresence>
                     {spots.map((spot) => (
-                      <ResultCard 
-                        key={spot.id} 
-                        spot={spot} 
+                      <ResultCard
+                        key={spot.id}
+                        spot={spot}
                         isSelected={selectedSpotId === spot.id}
                         onClick={() => {
                           setSelectedSpotId(spot.id);
@@ -230,13 +218,10 @@ export default function Home() {
             </div>
 
             {/* MAP VIEW */}
-            <div className={cn(
-              "w-full lg:flex-1 h-[500px] lg:h-auto relative rounded-2xl overflow-hidden shadow-inner",
-              mobileView === "map" ? "block" : "hidden lg:block"
-            )}>
-              <MapPanel 
-                location={location} 
-                spots={spots} 
+            <div className={cn("w-full lg:flex-1 h-125 lg:h-auto relative rounded-2xl overflow-hidden shadow-inner", mobileView === "map" ? "block" : "hidden lg:block")}>
+              <MapPanel
+                location={location}
+                spots={spots}
                 selectedSpotId={selectedSpotId}
                 onSpotSelect={(id) => {
                   setSelectedSpotId(id);
@@ -244,7 +229,6 @@ export default function Home() {
                 }}
               />
             </div>
-            
           </div>
         </div>
       </main>
