@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Compass, RefreshCw, AlertTriangle, Map as MapIcon, List as ListIcon } from "lucide-react";
 import { useGeolocation } from "../hooks/use-geolocation";
+import { useDebouncedValue } from "../hooks/use-debounced-value";
 import { useLocalStorage } from "../hooks/use-local-storage";
 import { useChillSpots } from "../hooks/use-chill-spots";
 import { ChillVibe } from "../types";
@@ -17,18 +18,26 @@ export default function Home() {
   const [vibe, setVibe] = useLocalStorage<ChillVibe>("chill-vibe", "sun");
   const [radius, setRadius] = useLocalStorage<number>("chill-radius", 10);
   const [timeframe, setTimeframe] = useState<"now" | "in60min">("now");
+  const debouncedRadius = useDebouncedValue(radius, 450);
+  const debouncedVibe = useDebouncedValue(vibe, 300);
+  const debouncedTimeframe = useDebouncedValue(timeframe, 300);
 
   const [selectedSpotId, setSelectedSpotId] = useState<string | null>(null);
 
   // Mobile layout toggle
   const [mobileView, setMobileView] = useState<"list" | "map">("list");
 
-  const { data: spots = [], isLoading: isLoadingSpots, error: spotsError, refetch } = useChillSpots(location, radius, vibe, timeframe);
+  const { data: spots = [], isLoading: isLoadingSpots, error: spotsError, refetch } = useChillSpots(
+    location,
+    debouncedRadius,
+    debouncedVibe,
+    debouncedTimeframe,
+  );
 
   // Clear selection if spots change
   useEffect(() => {
     setSelectedSpotId(null);
-  }, [spots.length, vibe, timeframe]);
+  }, [spots.length, debouncedVibe, debouncedTimeframe]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
@@ -223,9 +232,9 @@ export default function Home() {
                 location={location}
                 spots={spots}
                 selectedSpotId={selectedSpotId}
+                isVisible={mobileView === "map" || window.innerWidth >= 1024}
                 onSpotSelect={(id) => {
                   setSelectedSpotId(id);
-                  if (window.innerWidth < 1024) setMobileView("list");
                 }}
               />
             </div>

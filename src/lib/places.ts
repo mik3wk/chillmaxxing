@@ -50,10 +50,12 @@ export async function fetchNearbySpots(lat: number, lon: number, radiusMiles: nu
     const seenNames = new Set<string>();
 
     for (const element of data.elements) {
-      const spotLat = element.center?.lat || element.lat;
-      const spotLon = element.center?.lon || element.lon;
+      const rawLat = element.center?.lat ?? element.lat;
+      const rawLon = element.center?.lon ?? element.lon;
+      const spotLat = typeof rawLat === "number" ? rawLat : Number(rawLat);
+      const spotLon = typeof rawLon === "number" ? rawLon : Number(rawLon);
       
-      if (!spotLat || !spotLon) continue;
+      if (!Number.isFinite(spotLat) || !Number.isFinite(spotLon)) continue;
 
       let name = element.tags?.name || element.tags?.description;
       const type = determineType(element.tags || {});
