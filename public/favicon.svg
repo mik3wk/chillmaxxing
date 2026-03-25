@@ -1,3 +1,17 @@
 <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="180" height="180" rx="36" fill="#FF3C00"/>
+  <rect width="180" height="180" rx="36" fill="#87DCCB"/>
+  <circle cx="90" cy="90" r="90" fill="url(#sky)" fill-opacity="0.35"/>
+  <path d="M84 132C90 118 95 100 102 74" stroke="#7B4B2A" stroke-width="10" stroke-linecap="round"/>
+  <path d="M102 74C85 74 72 68 57 57C76 58 88 60 103 67" fill="#2F9E69"/>
+  <path d="M102 74C87 64 80 52 77 36C92 46 99 56 106 69" fill="#37B876"/>
+  <path d="M102 74C112 58 124 49 143 45C130 59 119 67 106 73" fill="#2CA66A"/>
+  <path d="M102 74C119 72 133 75 150 84C132 85 119 82 105 77" fill="#228B5A"/>
+  <path d="M102 74C110 84 114 98 114 114C105 101 101 89 99 77" fill="#4AC98A"/>
+  <circle cx="126" cy="126" r="8" fill="#FFD166"/>
+  <defs>
+    <radialGradient id="sky" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(90 48) rotate(90) scale(132)">
+      <stop stop-color="#FFF7C2"/>
+      <stop offset="1" stop-color="#87DCCB" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
 </svg>

@@ -61,7 +61,7 @@ export function ResultCard({ spot, isSelected, onClick }: ResultCardProps) {
       {spot.reasons.length > 0 && (
         <div className="flex flex-wrap gap-1.5 mb-5">
           {spot.reasons.map((reason, idx) => (
-            <span key={idx} className="px-2.5 py-1 bg-primary/5 border border-primary/10 text-primary-foreground/80 text-primary text-xs rounded-full font-semibold">
+            <span key={idx} className="px-2.5 py-1 bg-primary/5 border border-primary/10 text-primary text-xs rounded-full font-semibold">
               ✓ {reason}
             </span>
           ))}
