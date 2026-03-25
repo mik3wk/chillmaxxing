@@ -16,7 +16,7 @@ export default function Home() {
   const { location, status: geoStatus, requestLocation, errorMsg } = useGeolocation();
 
   const [vibe, setVibe] = useLocalStorage<ChillVibe>("chill-vibe", "sun");
-  const [radius, setRadius] = useLocalStorage<number>("chill-radius", 10);
+  const [radius, setRadius] = useLocalStorage<number>("chill-radius", 4);
   const [timeframe, setTimeframe] = useState<"now" | "in60min">("now");
   const debouncedRadius = useDebouncedValue(radius, 450);
   const debouncedVibe = useDebouncedValue(vibe, 300);

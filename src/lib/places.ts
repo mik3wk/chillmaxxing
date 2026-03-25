@@ -1,5 +1,8 @@
 import { CandidateSpot, SpotType } from "../types";
 
+const OVERPASS_RESULT_LIMIT = 15;
+const RETURNED_SPOT_LIMIT = 10;
+
 // Haversine formula to calculate distance in miles
 function getDistanceMiles(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 3958.8; // Radius of earth in miles
@@ -24,7 +27,7 @@ export async function fetchNearbySpots(lat: number, lon: number, radiusMiles: nu
   const radiusMeters = Math.round(radiusMiles * 1609.34);
   
   // Using Overpass API. "out center" gives us the lat/lon center of polygons/relations.
-  // Limiting to 25 items to keep it fast and responsive.
+  // Keep the raw fetch small so larger radii do not fan out too much.
   const query = `
     [out:json][timeout:15];
     (
@@ -33,7 +36,7 @@ export async function fetchNearbySpots(lat: number, lon: number, radiusMiles: nu
       nwr["tourism"="viewpoint"](around:${radiusMeters},${lat},${lon});
       nwr["leisure"="picnic_table"](around:${radiusMeters},${lat},${lon});
     );
-    out center 25;
+    out center ${OVERPASS_RESULT_LIMIT};
   `;
 
   try {
@@ -82,8 +85,8 @@ export async function fetchNearbySpots(lat: number, lon: number, radiusMiles: nu
       });
     }
 
-    // Sort by distance and return top 15
-    return spots.sort((a, b) => a.distanceMiles - b.distanceMiles).slice(0, 15);
+    // Sort by distance and keep the weather fan-out modest.
+    return spots.sort((a, b) => a.distanceMiles - b.distanceMiles).slice(0, RETURNED_SPOT_LIMIT);
   } catch (error) {
     console.error("Overpass API Error:", error);
     throw error;
